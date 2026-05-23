@@ -1,0 +1,192 @@
+/* Grid canvas — static styles (avoid inline <style> re-injection on every render) */
+
+.halleyx-grid-canvas .react-grid-layout {
+  transition: none !important;
+}
+
+.halleyx-grid-canvas .react-grid-placeholder {
+  background: rgba(99, 102, 241, 0.08) !important;
+  border-radius: 12px !important;
+  border: 2px dashed #a5b4fc !important;
+  transition: none !important;
+  z-index: 2;
+}
+
+.halleyx-grid-canvas .react-grid-item {
+  transition: none !important;
+}
+
+.halleyx-grid-canvas .react-grid-item.cssTransforms {
+  transition: none !important;
+}
+
+.halleyx-grid-canvas .react-grid-item.react-draggable-dragging,
+.halleyx-grid-canvas .react-grid-item.resizing {
+  z-index: 10;
+  transition: none !important;
+}
+
+.halleyx-grid-canvas .react-resizable-handle {
+  z-index: 40 !important;
+  background: none !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+}
+
+.halleyx-grid-canvas .react-resizable-handle::after {
+  content: '';
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.halleyx-grid-canvas .react-resizable-handle:hover::after,
+.halleyx-grid-canvas .react-grid-item.resizing .react-resizable-handle::after {
+  opacity: 1;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-se,
+.halleyx-grid-canvas .react-resizable-handle-sw,
+.halleyx-grid-canvas .react-resizable-handle-ne,
+.halleyx-grid-canvas .react-resizable-handle-nw {
+  width: 14px !important;
+  height: 14px !important;
+  background: transparent !important;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-se::after {
+  right: 3px;
+  bottom: 3px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #6366f1;
+  border-bottom: 2px solid #6366f1;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-sw::after {
+  left: 3px;
+  bottom: 3px;
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid #6366f1;
+  border-bottom: 2px solid #6366f1;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-ne::after {
+  right: 3px;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #6366f1;
+  border-top: 2px solid #6366f1;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-nw::after {
+  left: 3px;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid #6366f1;
+  border-top: 2px solid #6366f1;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-se {
+  bottom: 0 !important;
+  right: 0 !important;
+  cursor: se-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-sw {
+  bottom: 0 !important;
+  left: 0 !important;
+  cursor: sw-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-ne {
+  top: 0 !important;
+  right: 0 !important;
+  cursor: ne-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-nw {
+  top: 0 !important;
+  left: 0 !important;
+  cursor: nw-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-e,
+.halleyx-grid-canvas .react-resizable-handle-w {
+  width: 12px !important;
+  height: 36px !important;
+  margin-top: -18px !important;
+  top: 50% !important;
+  transform: none !important;
+  background: transparent !important;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-e {
+  right: 0 !important;
+  cursor: ew-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-w {
+  left: 0 !important;
+  cursor: ew-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-e::after,
+.halleyx-grid-canvas .react-resizable-handle-w::after {
+  content: '↔';
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: #6366f1;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-n,
+.halleyx-grid-canvas .react-resizable-handle-s {
+  width: 36px !important;
+  height: 12px !important;
+  margin-left: -18px !important;
+  left: 50% !important;
+  transform: none !important;
+  background: transparent !important;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-n {
+  top: 0 !important;
+  cursor: ns-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-s {
+  bottom: 0 !important;
+  cursor: ns-resize;
+}
+
+.halleyx-grid-canvas .react-resizable-handle-n::after,
+.halleyx-grid-canvas .react-resizable-handle-s::after {
+  content: '↕';
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: #6366f1;
+}
+
+.halleyx-grid-canvas .react-grid-item.resizing {
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
+  border-radius: 12px;
+}

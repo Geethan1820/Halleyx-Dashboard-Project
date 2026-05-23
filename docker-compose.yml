@@ -1,0 +1,115 @@
+# =============================================================================
+# Halleyx Dashboard — Docker Compose (full stack)
+# =============================================================================
+# Run everything with one command:
+#   docker compose up --build
+#
+# Services:
+#   - backend  → Express + Prisma + Socket.io on host port 3000
+#   - frontend → Vite dev server (hot reload) on host port 5173
+#
+# Networking note:
+#   The browser runs on your machine, NOT inside Docker. API calls from React
+#   must use http://localhost:3000 (published port), not the service name
+#   "backend". VITE_API_URL is set accordingly for the frontend build/runtime.
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Backend API + WebSocket server
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: halleyx-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      # SQLite file lives on a named volume so data survives container restarts
+      DATABASE_URL: file:/app/data/dev.db
+      JWT_SECRET: ${JWT_SECRET:-halleyx-docker-dev-secret-change-in-production}
+      # Browser origin for CORS + Socket.io (comma-separated for multiple origins)
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173,http://127.0.0.1:5173}
+    volumes:
+      # Hot reload: mount source over the image copy
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+      # Persist SQLite database outside the container filesystem
+      - sqlite_data:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 40s
+    networks:
+      - halleyx-net
+
+  # ---------------------------------------------------------------------------
+  # Frontend (Vite + React) with hot reload
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+      args:
+        # Injected at build time; browser uses host-mapped backend port
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    container_name: halleyx-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js
+      - ./frontend/postcss.config.js:/app/postcss.config.js
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tsconfig.app.json:/app/tsconfig.app.json
+      # Keep container node_modules; do not overwrite with empty host folder
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:5173').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 60s
+    networks:
+      - halleyx-net
+
+# =============================================================================
+# Volumes — named volumes persist data even when containers are recreated
+# =============================================================================
+volumes:
+  sqlite_data:
+    driver: local
+  frontend_node_modules:
+    driver: local
+
+# =============================================================================
+# Network — isolated bridge so services can resolve each other by name
+# =============================================================================
+networks:
+  halleyx-net:
+    driver: bridge

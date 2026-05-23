@@ -1,0 +1,20 @@
+# Production overlay — use with:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+#
+# Rebuilds images with production targets. Remove dev source mounts by scaling
+# down and using only production targets (see DOCKER.md).
+
+services:
+  backend:
+    build:
+      target: production
+    environment:
+      NODE_ENV: production
+
+  frontend:
+    build:
+      target: production
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    environment:
+      NODE_ENV: production
